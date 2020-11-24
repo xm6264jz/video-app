@@ -1,9 +1,6 @@
+from urllib import parse 
 from django.db import models
-from urllib import parse
 from django.core.exceptions import ValidationError
-
-
-# Create your models here.
 
 class Video(models.Model):
     name = models.CharField(max_length=200)
@@ -12,7 +9,7 @@ class Video(models.Model):
     video_id = models.CharField(max_length=40, unique=True)
 
     def save(self, *args, **kwargs):
-         # checks for a valid YouTube URL in the form
+        # checks for a valid YouTube URL in the form
         # https://www.youtube.com/watch?v=12345678
         # where 12345678 is the video ID
         # extract the video id from the URL, prevent save if not valid YouTube URL or id ID is not found in URL
@@ -39,18 +36,18 @@ class Video(models.Model):
         except ValueError as e:   # URL parsing errors, malformed URLs
             raise ValidationError(f'Unable to parse URL {self.url}') from e
 
-        super().save(*args, **kwargs)
-
-            
-
-
-
-
+        super().save(*args, **kwargs)  # don't forget!
+                    
 
     def __str__(self):
-
         # String displayed in the admin console, or when printing a model object. 
         # You can return any useful string here. Optionally 
-        return f'ID: {self.pk}, Name: {self.name}, URL: {self.url}, Video ID:{self.video_id}, Notes: {self.notes[:200]}'
+        if not self.notes:
+            notes = 'No notes'
+        else:
+            notes = self.notes[:200]
+        return f'ID: {self.pk}, Name: {self.name}, URL: {self.url},  \
+        Video ID: {self.video_id},  Notes: {notes}'
+
 
      
